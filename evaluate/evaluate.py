@@ -267,11 +267,12 @@ def main():
     originalTextLen = len(list(originalText))
 
     print('[info] generating typos')
+    #将原始的词随机修改，并以单个词的集合-列表返回
     erroredText = generateTypos(originalText)
     erroredTextLen = len(list(erroredText))
 
     assert originalTextLen == erroredTextLen
-
+    #将原始文本分割成句子（去掉其中的非法符号和非句号）（不包含句号）
     originalSentences = generateSentences(originalText)
     erroredSentences = generateSentences(erroredText)
 
@@ -294,6 +295,8 @@ def main():
 
     print(
         '[info] %12s %8s  %8s  %8s  %8s  %8s  %8s' % ('', 'errRate', 'fixRate', 'broken', 'topNerr', 'topNfix', 'time'))
+    # 将多个打分器的结果 resultsfixRate从大到小排序打印出来
+    # 匿名函数 ~ 将x替换为results.items()即就是results.items[i][1]
     for k, _ in sorted(results.items(), key=lambda x: x[1]):
         print('[info] %10s  %8.2f%% %8.2f%% %8.2f%% %8.2f%% %8.2f%% %8.2fs' % \
               (k,
