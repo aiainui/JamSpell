@@ -180,7 +180,7 @@ def evaluateCorrector(correctorName, corrector, originalSentences, erroredSenten
 
         # if fixedWord != originalWord:
         #    print originalWord, erroredWord, fixedWord
-    # 错的/整体 | 对的/错的 | 错的/对的 | top7错的/整体 | top7对的/错的
+    # 错的/整体 | 对的/错的 | 错的/对的 | top7错的/整体 | top7对的/错的 | 总耗时
     return float(totalErrors) / n, \
            float(fixedErrors) / origErrors, \
            float(broken) / totalNotTouched, \
