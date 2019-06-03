@@ -127,6 +127,7 @@ def evaluateCorrector(correctorName, corrector, originalSentences, erroredSenten
             originalWord = originalText[pos]
             fixedCandidates = corrector.correct(erroredText, pos)
             if isinstance(fixedCandidates, list):
+                # 只取top7
                 fixedCandidates = fixedCandidates[:7]
                 fixedWord = fixedCandidates[0]
                 fixedWords = set(fixedCandidates)
@@ -139,25 +140,29 @@ def evaluateCorrector(correctorName, corrector, originalSentences, erroredSenten
 
             erroredText[pos] = fixedWord
             n += 1
-
+            # 不相等时，也就是说该单词被随机成另外一个单词了
             if erroredWord != originalWord:
                 origErrors += 1
+                # 如果相等，则表示随机后的单词被纠正成为正确的单词了
                 if fixedWord == originalWord:
                     fixedErrors += 1
+                # 如果不相等，但是在纠正后的候选列表(top7)中，则表示topN纠正对了
                 if fixedWord != erroredWord and originalWord in fixedCandidates:
                     topNfixed += 1
+            # 相等时，也就是说该单词随机修改后还是原来的单词
             else:
                 totalNotTouched += 1
+                # 如果纠正后的单词和原始单词不一样了，说明误纠了：将本来正确的单词纠错了
                 if fixedWord != originalWord:
                     broken += 1
                     # print originalWord, fixedWord
-
+            # 如果纠正后的单词和原始单词不一致，则表明这个单词是错的
             if fixedWord != originalWord:
                 totalErrors += 1
-
+            # 如果纠正后的单词列表中没有原始单词，则表明topN也没纠正对这个单词
             if originalWord not in fixedWords:
                 topNtotalErrors += 1
-
+            #
             if sentID % 1 == 0 and pos and time.time() - lastTime > 4.0:
                 progress = float(sentID) / len(originalSentences)
                 err_rate = float(totalErrors) / n
@@ -175,7 +180,7 @@ def evaluateCorrector(correctorName, corrector, originalSentences, erroredSenten
 
         # if fixedWord != originalWord:
         #    print originalWord, erroredWord, fixedWord
-
+    # 错的/整体 | 对的/错的 | 错的/对的 | top7错的/整体 | top7对的/错的
     return float(totalErrors) / n, \
            float(fixedErrors) / origErrors, \
            float(broken) / totalNotTouched, \
